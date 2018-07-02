@@ -5,50 +5,50 @@
 import tweepy
 import csv
 
-TARGET = ""
+TARGET = "@realDonaldTrump"
 
 def get_tweets(api, user):
-	'''
-	tweets = api.user_timeline(screen_name = user,count=200)
-	last = tweets[-1].id - 1
-	n_added = len(tweets)
-	while n_added:
-		tweets += api.user_timeline(screen_name = user,count=200, max_id = last)
-		n_added = len(tweets) - 
-	'''
-	s = tweepy.Cursor(api.user_timeline, screen_name = user, include_rts = True)
 	tweets = []
-	while True:
-		try:
-			t = c.next()
-			tweets.append([t.id_str, t.created_at, t.text.encode("utf-8")])
-		except tweepy.TweepError:
-       		time.sleep(60 * 15)
-        	continue
-		except StopIteration:
-			break 
+	i = 0
+	for t in tweepy.Cursor(api.user_timeline, 
+					  screen_name = user, 
+					  include_rts = True,  
+					  wait_on_rate_limit=True).items():
+		tweets.append([t.id_str, 
+					   t.created_at,
+					   t.retweet_count, 
+					   t.text.encode("utf-8")])
+		i += 1
+		if i % 50 == 0:
+			print("Collected " + str(i) + " tweets")
+	print("Writing Tweets")
 	write_tweets(tweets, user)
 
 def write_tweets(t, user):
-	with open('%s_tweets.csv' % user, 'wb') as f:
+	with open('%s_tweets.csv' % user, 'w') as f:
 		csvwriter = csv.writer(f)
-		writer.writerow(["id","created_at","text"])
-		writer.writerows(t)
+		csvwriter.writerow(["id","created_at","retweets","text"])
+		csvwriter.writerows(t)
 	
+
 def tweep_init():
-	auth = tweepy.OAuthHandler(get_codes(consumer = True))
-	auth.set_access_token(get_codes(consumer = False))
+	c_key, c_sec, a_key, a_sec = get_codes()
+	auth = tweepy.OAuthHandler(c_key, c_sec)
+	auth.set_access_token(a_key, a_sec)
 	api = tweepy.API(auth)
 	return api
 
-def get_codes(consumer):
-	target = "auth/access"
-	if consumer:
-		target = "auth/con"
-	with open(target, 'r') as f:
+def get_codes():
+	with open("auth/con", 'r') as f:
 		codes = f.readlines()
-		codes = [c.strip() for c in codes]
-	return codes[0], codes[1]
+	with open("auth/access", 'r') as f:
+		codes += f.readlines()
+	codes = [c.strip() for c in codes]
+	return codes
+	
 	
 if __name__ == '__main__':
-	pass
+	print("Setting up API authorization")
+	api = tweep_init()
+	print("Getting tweets")
+	get_tweets(api, TARGET)
