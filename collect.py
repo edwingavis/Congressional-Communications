@@ -5,7 +5,7 @@
 import tweepy
 import csv
 
-TARGET = "@realDonaldTrump"
+TARGET = "@LuisGutierrez"
 
 def get_tweets(api, user):
 	tweets = []
