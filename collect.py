@@ -5,7 +5,7 @@
 import tweepy
 import csv
 
-TARGET = "@RepGutierrez"
+TARGETS = ["@RepGutierrez"]
 
 def get_tweets(api, user):
 	tweets = []
@@ -51,4 +51,5 @@ if __name__ == '__main__':
 	print("Setting up API authorization")
 	api = tweep_init()
 	print("Getting tweets")
-	get_tweets(api, TARGET)
+	for u in TARGETS:
+	    get_tweets(api, u)
