@@ -21,10 +21,7 @@ SITE_REGEX = re.compile("[a-z]*://[a-z0-9\.\-]*/")
 def main():
     '''
     '''
-    #more record linkage
     #this currently finds all house.gov web addresses heuristically 
-    #would need to record link w/ other websites, though could improve
-    #accuracy by just considering incumbents 
     rep_sites = pull_house_urls("house.gov")
     with open("lists/house_2018_websites.csv", 'r') as csvfile:
         spamreader = csv.reader(csvfile)
