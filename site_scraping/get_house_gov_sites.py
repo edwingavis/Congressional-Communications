@@ -23,10 +23,10 @@ def main():
     '''
     #this currently finds all house.gov web addresses heuristically 
     rep_sites = pull_house_urls("house.gov")
-    with open("lists/house_2018_websites.csv", 'r') as csvfile:
+    with open("../lists/house_2018_websites.csv", 'r') as csvfile:
         spamreader = csv.reader(csvfile)
         labels = next(spamreader) #may be able to just give column titles...
-        with open("lists/house_2018_sites_gov.csv", 'w') as csvfile2:
+        with open("../lists/house_2018_sites_gov.csv", 'w') as csvfile2:
             spamwriter = csv.writer(csvfile2)
             spamwriter.writerow(labels[:-1] + ["GOV_SITE"] + [labels[-1]])
             bar = progressbar.ProgressBar()
@@ -38,6 +38,8 @@ def main():
                 spamwriter.writerow(row[:-1] + match + [row[-1]])                        
 
 def get_match(state, name, r_sites):
+    '''
+    '''
     best = (0, "")
     names = name.split(" ")
     for possible in r_sites[state]:
@@ -59,6 +61,8 @@ def get_match(state, name, r_sites):
     return best[1]
 
 def pull_house_urls(term):
+    '''
+    '''
     reps = collections.defaultdict(dict)
     f_names = os.listdir("searches") #mkdir and fill
     for name in f_names:
